@@ -1,5 +1,4 @@
-import {MineSweeper} from "./sweeper";
-import {type} from "os";
+import {getNeighbours, MineSweeper, MinesweeperView} from "./sweeper";
 
 describe('MineSweeper', () => {
   it('should return 10x10 grid with ten mines in it', () => {
@@ -14,54 +13,16 @@ describe('MineSweeper', () => {
     });
     expect(mineCount).toEqual(10);
   });
+
+  it('should propagate clicks to view() to MinesweeperView\`s view()', () => {
+    const game = new MineSweeper();
+    const mock = jest.fn();
+    game.view.click = mock;
+    game.click(1, 1);
+    expect(mock).toHaveBeenCalledWith(1, 1);
+  });
 });
 
-function getNeighbours(currentRow, currentColumn, maxRow, maxColumn) {
-  const neighbourRow = [currentRow - 1, currentRow, currentRow + 1].filter(r => r >= 0 && r < maxRow);
-  const neighbourColumns = [currentColumn - 1, currentColumn, currentColumn + 1].filter(c => c >= 0 && c < maxColumn);
-
-  const neighbourCells = [];
-  for(const r of neighbourRow) {
-    for (const c of neighbourColumns) {
-       if(`${r}-${c}` !== `${currentRow}-${currentColumn}`) {
-         const cell = [r, c];
-         neighbourCells.push(cell);
-       }
-    }
-  }
-  return neighbourCells;
-
-
-}
-
-function getView(grid:boolean[][]) {
-  const rLength = grid.length;
-  const cLength = grid[0].length;
-
-  const view = []
-  for(let r = 0; r < rLength; r++) {
-    const row = [];
-    for(let c = 0; c < cLength; c++) {
-      const neighbours = getNeighbours(r, c, rLength, cLength);
-      // get number of bombs
-      if(grid[r][c] === true) {
-        row.push(-1)
-      } else {
-        let bombCount = 0;
-        for (let neighbour of neighbours) {
-          const nR = neighbour[0];
-          const nC = neighbour[1];
-          const val = grid[nR][nC];
-
-          if (val) bombCount++;
-        }
-        row.push(bombCount);
-      }
-    }
-    view.push(row);
-  }
-  return view;
-}
 
 describe('MinesweeperView', () => {
   it('should get correct neighboring rows and columns', () => {
@@ -79,18 +40,61 @@ describe('MinesweeperView', () => {
 
   });
 
-  it('cell should show number of mines next to a cell', () => {
+  it('cell should show number of mines next to a cell, visibility, and whether it is a bomb', () => {
     const grid = [
       [true, false, false],
       [true, false, false],
       [false, false, false],
     ];
 
-    const view = getView(grid);
-    expect(view).toEqual([
-      [-1, 2, 0],
-      [-1, 2, 0],
-      [1, 1, 0],
+    const view = new MinesweeperView(grid);
+    expect(view.view).toEqual([
+      [[1, false, true], [2, false, false], [0, false, false]],
+      [[1, false, true], [2, false, false], [0, false, false]],
+      [[1, false, false], [1, false, false], [0, false, false]],
     ])
+  });
+
+  it('should tell whether to show number of  or not when cell is clicked', () => {
+    const grid = [
+      [true, false, false],
+      [true, false, false],
+      [false, false, false],
+    ];
+    // click [2, 0]
+    const view = new MinesweeperView(grid);
+    view.click(2, 0);
+    expect(view.view[2][0]).toEqual([1, true, false, true]); // minecount, visited, isbomb, dislayCount;
+    expect(view.view).toEqual([
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]],
+      [[1, false, true, true], [2, false, false, true], [0, false, false, false]],
+      [[1, true, false, true], [1, false, false, true], [0, false, false, false]],
+    ]);
+
+    // click [2, 2]
+    view.click(2, 2);
+    expect(view.view).toEqual([
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]],
+      [[1, false, true, true], [2, false, false, true], [0, false, false, true]],
+      [[1, true, false, true], [1, false, false, true], [0, true, false, true]],
+    ]);
+  });
+});
+
+describe('Minesweeper', () => {
+  it('should end game correctly', () => {
+    const game = new MineSweeper();
+    const grid = [
+      [true, false, false],
+      [true, false, false],
+      [false, false, false],
+    ];
+    // overwrite games grid
+    game.grid = grid;
+
+    const view = new MinesweeperView(grid);
+    game.view = view;
+    game.click(2, 0);
+    expect(game.isFinished()).toBe(false);
   });
 });
