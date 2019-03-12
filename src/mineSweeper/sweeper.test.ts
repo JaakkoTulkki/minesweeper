@@ -1,4 +1,8 @@
-import {getNeighbours, MineSweeper, MinesweeperView} from "./sweeper";
+import {Cell, getNeighbours, MineSweeper, MinesweeperView} from "./sweeper";
+
+function toCell(count, visited, hasBomb, dislayCount) {
+  return new Cell(count, visited, hasBomb, dislayCount);
+}
 
 describe('MineSweeper', () => {
   it('should return 10x10 grid with ten mines in it', () => {
@@ -48,11 +52,13 @@ describe('MinesweeperView', () => {
     ];
 
     const view = new MinesweeperView(grid);
-    expect(view.view).toEqual([
-      [[1, false, true], [2, false, false], [0, false, false]],
-      [[1, false, true], [2, false, false], [0, false, false]],
-      [[1, false, false], [1, false, false], [0, false, false]],
-    ])
+    const exptecValues = [
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, false, false, false], [1, false, false, false], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+    ];
+
+    expect(view.view).toEqual(exptecValues);
   });
 
   it('should tell whether to show number of  or not when cell is clicked', () => {
@@ -64,19 +70,18 @@ describe('MinesweeperView', () => {
     // click [2, 0]
     const view = new MinesweeperView(grid);
     view.click(2, 0);
-    expect(view.view[2][0]).toEqual([1, true, false, true]); // minecount, visited, isbomb, dislayCount;
     expect(view.view).toEqual([
-      [[1, false, true, false], [2, false, false, false], [0, false, false, false]],
-      [[1, false, true, true], [2, false, false, true], [0, false, false, false]],
-      [[1, true, false, true], [1, false, false, true], [0, false, false, false]],
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, false, true, true], [2, false, false, true], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, true, false, true], [1, false, false, true], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
     ]);
 
     // click [2, 2]
     view.click(2, 2);
     expect(view.view).toEqual([
-      [[1, false, true, false], [2, false, false, false], [0, false, false, false]],
-      [[1, false, true, true], [2, false, false, true], [0, false, false, true]],
-      [[1, true, false, true], [1, false, false, true], [0, true, false, true]],
+      [[1, false, true, false], [2, false, false, false], [0, false, false, false]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, false, true, true], [2, false, false, true], [0, false, false, true]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
+      [[1, true, false, true], [1, false, false, true], [0, true, false, true]].map(([count, visited, hasBomb, dislayCount]) => toCell(count, visited, hasBomb, dislayCount)),
     ]);
   });
 });

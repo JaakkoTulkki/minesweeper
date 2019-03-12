@@ -48,13 +48,13 @@ export class MineSweeper {
 }
 
 type Grid = boolean[][];
-type BombCount = number;
-type Visited = boolean;
-type IsBomb = boolean;
-type DisplayBombCount = boolean;
-type ViewCell = [BombCount, Visited, IsBomb, DisplayBombCount];
-type ViewRow = ViewCell[];
+type ViewRow = Cell[];
 type View = ViewRow[];
+
+export class Cell {
+  constructor(public bombCount: number, public visited: boolean, public hasBomb: boolean, public displayBombCount: boolean) {
+  }
+}
 
 export class MinesweeperView {
   public view: View;
@@ -82,7 +82,7 @@ export class MinesweeperView {
 
           if (val) bombCount++;
         }
-        const cell: ViewCell = [bombCount, false, isBomb, false];
+        const cell: Cell = new Cell(bombCount, false, isBomb, false);//[bombCount, false, isBomb, false];
         row.push(cell);
       }
       view.push(row);
@@ -94,10 +94,10 @@ export class MinesweeperView {
     const neighbours = getNeighbours(row, column, this.grid.length, this.grid[0].length);
     for(const n of neighbours) {
       const [r, c] = n;
-      this.view[r][c][3] = true;
+      this.view[r][c].displayBombCount = true;
     }
-    this.view[row][column][1] = true;
-    this.view[row][column][3] = true;
+    this.view[row][column].visited = true;
+    this.view[row][column].displayBombCount = true;
   }
 }
 
