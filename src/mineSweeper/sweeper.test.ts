@@ -87,19 +87,40 @@ describe('MinesweeperView', () => {
 });
 
 describe('Minesweeper', () => {
-  it('should end game correctly', () => {
-    const game = new MineSweeper();
-    const grid = [
+  const grid = [
       [true, false, false],
       [true, false, false],
       [false, false, false],
     ];
-    // overwrite games grid
+  let game: MineSweeper;
+  beforeEach(() => {
+    game = new MineSweeper();
+    // overwrite game's grid and view
     game.grid = grid;
+    game.view = new MinesweeperView(grid);
+  });
 
-    const view = new MinesweeperView(grid);
-    game.view = view;
+  it('should end game correctly when hits a mine', () => {
     game.click(2, 0);
     expect(game.isFinished()).toBe(false);
+
+    game.click(1, 1);
+    expect(game.isFinished()).toBe(false);
+
+    // hit mine
+    game.click(1, 0);
+    expect(game.isFinished()).toBe(true);
+  });
+
+  it('should end game when gone through all the cells that do not have mines', () => {
+    game.click(0, 1);
+    game.click(0, 2);
+    game.click(1, 1);
+    game.click(1, 2);
+    game.click(2, 0);
+    game.click(2, 1);
+    expect(game.isFinished()).toEqual(false);
+    game.click(2, 2);
+    expect(game.isFinished()).toEqual(true);
   });
 });

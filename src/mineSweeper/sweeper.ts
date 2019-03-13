@@ -37,13 +37,16 @@ export class MineSweeper {
     const flattened  = this.view.view.reduce((acc: any[], value: ViewRow) => {
       return acc.concat(value);
     }, []);
-    const cellsVisible = flattened.filter((v) => {
-      if(v[0] === -1 && v[1]) {
+    const bombCount = flattened.reduce((acc: number, cell: Cell) => {
+      return cell.hasBomb ? acc + 1 : acc;
+    }, 0);
+    const cellsVisible = flattened.filter((cell: Cell) => {
+      if(cell.hasBomb && cell.visited) {
         isFinished = true;
       }
-      return v[1];
+      return cell.visited;
     });
-    return isFinished || cellsVisible.length === flattened.length;
+    return isFinished || cellsVisible.length === (flattened.length  - bombCount);
   }
 }
 
