@@ -3,8 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    // entry: ["./src/index.tsx", "./src/scss/main.scss"],
-    entry: ["./src/index.tsx"],
+    entry: ["./src/index.tsx", "./src/scss/main.scss"],
+    // entry: ["./src/index.tsx"],
     mode: "development",
     output: {
         path: path.resolve(__dirname, 'public'),

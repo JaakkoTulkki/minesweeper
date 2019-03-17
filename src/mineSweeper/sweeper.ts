@@ -50,9 +50,9 @@ export class MineSweeper {
   }
 }
 
-type Grid = boolean[][];
-type ViewRow = Cell[];
-type View = ViewRow[];
+export type Grid = boolean[][];
+export type ViewRow = Cell[];
+export type View = ViewRow[];
 
 export class Cell {
   constructor(public bombCount: number, public visited: boolean, public hasBomb: boolean, public displayBombCount: boolean) {
