@@ -2,23 +2,37 @@ import * as React from "react";
 import {MineSweeper, Cell, ViewRow} from '../mineSweeper/sweeper';
 import * as styles from '../scss/main.scss';
 
-function RCell(props) {
+function GameCell(props) {
   const cell: Cell = props.cell;
-  if(cell.hasBomb) {
-    return <div className={`${styles.cell}`} onClick={props.onClick}>m</div>
+  if (cell.hasBomb && cell.visited) {
+    return <div className={`${styles.cell} ${styles.cellBomb}`} onClick={props.onClick}>m</div>
   } else {
-    return <span className={`${styles.cell}`}>{cell.visited ? cell.bombCount : null}</span>
+    return <span className={`${styles.cell}`} onClick={props.onClick}>{cell.visited ? cell.bombCount : null}</span>
   }
 }
 
-export const App = () => {
-  const game = new MineSweeper();
-  return <>{game.view.view.map((row: ViewRow, rowIndex: number) => {
-    return <>{row.map((cell: Cell, columnIndex: number) => {
-      return <RCell cell={cell} onClick={() => {
-        game.click(rowIndex, columnIndex);
-      }}/>;
-    })}<br>
-    </br></>
-  })}</>
-};
+export class App extends React.Component<any, { game: MineSweeper, clicks: number }> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      game: new MineSweeper(),
+      clicks: 0,
+    };
+  }
+
+  render() {
+    return <>
+      {this.state.game.isFinished() ? <div>Game Finished</div> : null}
+      {this.state.game.view.view.map((row: ViewRow, rowIndex: number) => {
+        return <>{row.map((cell: Cell, columnIndex: number) => {
+          return <GameCell cell={cell} onClick={() => {
+            if (!this.state.game.isFinished()) {
+              this.state.game.click(rowIndex, columnIndex);
+              this.setState({clicks: this.state.clicks + 1})
+            }
+          }}/>;
+        })}<br>
+        </br></>
+      })}</>
+  }
+}
