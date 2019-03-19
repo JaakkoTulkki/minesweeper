@@ -15,7 +15,7 @@ export class App extends React.Component<any, { game: MineSweeper, clicks: numbe
   constructor(props) {
     super(props);
     this.state = {
-      game: new MineSweeper(),
+      game: new MineSweeper(5, 5, 5),
       clicks: 0,
     };
   }
