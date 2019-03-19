@@ -94,7 +94,21 @@ export class MinesweeperView {
   }
 
   public click(row: number, column: number) {
-    this.view[row][column].visited = true;
+    let cell = this.view[row][column];
+    const hadBeenVisited = cell.visited;
+    cell.visited = true;
+    // if this is zero get neighbours and visit them if they are zeros
+    if (!hadBeenVisited && cell.bombCount === 0) {
+      const neighbours = getNeighbours(row, column, this.grid.length, this.grid[0].length);
+      for(const neighbour of neighbours) {
+        const [r, c] = neighbour;
+        const n_cell = this.view[r][c];
+        if(!n_cell.hasBomb && n_cell.bombCount === 0) {
+          this.click(r, c);
+        }
+
+      }
+    }
   }
 }
 

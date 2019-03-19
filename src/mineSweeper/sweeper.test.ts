@@ -77,10 +77,11 @@ describe('MinesweeperView', () => {
     ]);
 
     // click [2, 2]
+    // now should show [0, 2], [1, 2] as well
     view.click(2, 2);
     expect(view.view).toEqual([
-      [[1, false, true], [2, false, false], [0, false, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
-      [[1, false, true], [2, false, false], [0, false, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
+      [[1, false, true], [2, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
+      [[1, false, true], [2, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
       [[1, true, false], [1, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
     ]);
   });
@@ -113,14 +114,19 @@ describe('Minesweeper', () => {
   });
 
   it('should end game when gone through all the cells that do not have mines', () => {
+    expect(game.view.view[0][2].visited).toBe(false);
+    expect(game.view.view[1][2].visited).toBe(false);
+    game.click(2, 2); // should make  [0, 2] and [1, 2] visited
+    expect(game.view.view[0][2].visited).toBe(true);
+    expect(game.view.view[1][2].visited).toBe(true);
+    expect(game.isFinished()).toEqual(false);
+
     game.click(0, 1);
-    game.click(0, 2);
     game.click(1, 1);
-    game.click(1, 2);
-    game.click(2, 0);
     game.click(2, 1);
     expect(game.isFinished()).toEqual(false);
-    game.click(2, 2);
+
+    game.click(2, 0);
     expect(game.isFinished()).toEqual(true);
   });
 });
