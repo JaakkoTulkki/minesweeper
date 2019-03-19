@@ -77,12 +77,12 @@ describe('MinesweeperView', () => {
     ]);
 
     // click [2, 2]
-    // now should show [0, 2], [1, 2] as well
+    // now should show all the non bomb cells
     view.click(2, 2);
     expect(view.view).toEqual([
-      [[1, false, true], [2, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
-      [[1, false, true], [2, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
-      [[1, true, false], [1, false, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
+      [[1, false, true], [2, true, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
+      [[1, false, true], [2, true, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
+      [[1, true, false], [1, true, false], [0, true, false]].map(([count, visited, hasBomb]) => toCell(count, visited, hasBomb)),
     ]);
   });
 });
